@@ -1,125 +1,65 @@
-import 'package:flutter/material.dart';
-import 'package:betify/src/models/game.dart';
-import 'package:betify/src/services/game_api_provider.dart';
+/*import 'package:flutter/material.dart';
+import 'package:betify/src/screens/game_detail_screenOLD.dart';
 import '../widgets/bottom_navigation.dart';
-import 'package:faker/faker.dart';
 
-class GamesListScreen extends StatefulWidget {
-  final GameApiProvider _api = GameApiProvider();
+class CounterHomeScreen extends StatefulWidget {
+  final String _title;
 
+  CounterHomeScreen({required String title}) : this._title = title;
+  
   @override
-  _GamesListScreenState createState() => _GamesListScreenState();
+  _CounterHomeScreenState createState() => _CounterHomeScreenState();
   
 }
 
-
-
-class _GamesListScreenState extends State<GamesListScreen> {
-  List<Game> _games = [];
-
-  @override
-  initState() {
-    super.initState();
-    print('I am calling initState!');
-    _fetchGames();
-  }
-
-  _fetchGames() async {
-    List<Game> games = await widget._api.fetchGames();
-
-    setState(() {
-      _games = games;
-    });
-  }
-
-  _addGame() {
-    final String id = faker.randomGenerator.string(10000000);
-    final String language = faker.food.dish();
-    final String title = faker.food.dish();
-
-    final newGame = Game(id: id, language: language, title: title);
-
-    setState(() {
-      _games.add(newGame);
-    });
-  }
-
+class _CounterHomeScreenState extends State<CounterHomeScreen>{
+  int _counter = 0;
+  
   @override
   Widget build(BuildContext context) {
-    return _InheritedGame(
-      games: _games,
-      createGame: _addGame,
-      child: _GameList()
-    );
-  }
-}
-
-
-
-class _InheritedGame extends InheritedWidget {
-  final Widget child;
-  final List<Game> games;
-  final Function createGame;
-
-  _InheritedGame({required Widget this.child, required this.games, required this.createGame}) : super(child: child);
-
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) => true;
-
-  static of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<_InheritedGame>();
-  }
-}
-
-
-
-class _GameList extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-
-    final games = _InheritedGame.of(context)!.games;
-    
-    //final games = context.dependOnInheritedWidgetOfExactType
-
     return Scaffold(
-      appBar: AppBar(title: Text('Games Screen')),
-      body: ListView.builder(
-        itemCount: games.length * 2,
-        itemBuilder: (BuildContext context, int i) {
-
-          if (i.isOdd) {
-            return Divider();
-          }
-
-          final index = i ~/ 2;
-
-          return ListTile(
-            title: Text(games[index].title),
-            subtitle: Text(games[index].language)
-          );
-        }
-      ),
-      bottomNavigationBar: BottomNavigation(),
-      floatingActionButton: _AddGameButton()
-    );
+        appBar: AppBar(title: Text(widget._title)),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget> [
+            Text(
+              'Welcome to ${widget._title}', 
+              textDirection: TextDirection.ltr  
+            ),
+            Text(
+              'Counter: $_counter', 
+              textDirection: TextDirection.ltr,
+              style: const TextStyle(fontSize: 30.0)
+            ),
+            ElevatedButton(
+              child: Text('Go to Game Detail'),
+              onPressed: () {
+                Navigator.pushNamed(context, GameDetailScreen.route);
+              }
+            )
+          ]
+          )
+        ), 
+        bottomNavigationBar: BottomNavigation(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              _counter++;
+            });
+          },
+          tooltip: 'Increment',
+          child: const Icon(Icons.add)
+        ),
+      );
   }
 }
+*/
 
 
 
-class _AddGameButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {
-        _InheritedGame.of(context)!.createGame();
-      },
-      tooltip: 'Add Game',
-      child: const Icon(Icons.add)
-    );
-  }
-}
+
+
 
 /*
 class MyHomePage extends StatefulWidget {

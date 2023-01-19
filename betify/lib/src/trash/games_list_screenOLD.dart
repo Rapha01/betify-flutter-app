@@ -1,60 +1,98 @@
+/*import 'package:betify/src/scoped_model/game_modelOLD.dart';
 import 'package:flutter/material.dart';
-import 'package:betify/src/screens/game_detail_screen.dart';
+import 'package:betify/src/models/gameOLD.dart';
+import 'package:scoped_model/scoped_model.dart';
+import '../state/app_state.dart';
 import '../widgets/bottom_navigation.dart';
 
-class CounterHomeScreen extends StatefulWidget {
-  final String _title;
-
-  CounterHomeScreen({required String title}) : this._title = title;
+class GamesListScreen extends StatefulWidget {
   
   @override
-  _CounterHomeScreenState createState() => _CounterHomeScreenState();
+  _GamesListScreenState createState() => _GamesListScreenState();
   
 }
 
-class _CounterHomeScreenState extends State<CounterHomeScreen>{
-  int _counter = 0;
-  
+
+
+class _GamesListScreenState extends State<GamesListScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text(widget._title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget> [
-            Text(
-              'Welcome to ${widget._title}', 
-              textDirection: TextDirection.ltr  
-            ),
-            Text(
-              'Counter: $_counter', 
-              textDirection: TextDirection.ltr,
-              style: const TextStyle(fontSize: 30.0)
-            ),
-            ElevatedButton(
-              child: Text('Go to Game Detail'),
-              onPressed: () {
-                Navigator.pushNamed(context, GameDetailScreen.route);
-              }
-            )
-          ]
-          )
-        ), 
-        bottomNavigationBar: BottomNavigation(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              _counter++;
-            });
-          },
-          tooltip: 'Increment',
-          child: const Icon(Icons.add)
-        ),
-      );
+    return ScopedModel<GameModel>(
+      model: GameModel(), 
+      child: _GameList()
+    );
   }
 }
 
+
+
+class _GameList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ScopedModelDescendant<GameModel>(
+      builder: (context, _, model) {
+        final games = model.games;
+        return Scaffold(
+          appBar: AppBar(title: Text(model.testingState)),
+          body: ListView.builder(
+            itemCount: games.length * 2,
+            itemBuilder: (BuildContext context, int i) {
+
+              if (i.isOdd) {
+                return Divider();
+              }
+
+              final index = i ~/ 2;
+
+              return ListTile(
+                title: Text(games[index].title),
+                subtitle: Text(games[index].language)
+              );
+            }
+          ),
+          bottomNavigationBar: BottomNavigation(),
+          floatingActionButton: _AddGameButton()
+        );
+      }
+    );  
+  }
+}
+
+
+
+class _AddGameButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final gameModel = ScopedModel.of<GameModel>(context, rebuildOnChange: true);
+  
+    return FloatingActionButton(
+      onPressed: () {
+        gameModel.addGame();
+      },
+      tooltip: 'Add Game',
+      child: const Icon(Icons.add)
+    );
+  }
+}
+*/
+
+
+/*
+class _InheritedGame extends InheritedWidget {
+  final Widget child;
+  final List<Game> games;
+  final Function createGame;
+
+  _InheritedGame({required Widget this.child, required this.games, required this.createGame}) : super(child: child);
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) => true;
+
+  static of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<_InheritedGame>();
+  }
+}
+*/
 
 /*
 class MyHomePage extends StatefulWidget {
