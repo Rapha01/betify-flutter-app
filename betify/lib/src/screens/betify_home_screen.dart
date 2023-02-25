@@ -61,25 +61,47 @@ class BetifyHomeScreenState extends State<BetifyHomeScreen> {
 class _GameTitle extends StatelessWidget {
   final AuthApiService auth = AuthApiService();
 
-  _buildUserWelcome() async {
-    if (await auth.isAuthenticated()) {
-      return Container(
-        margin: const EdgeInsets.only(top: 10.0),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(auth.user!.avatarUrl != '' ? auth.user!.avatarUrl : ''),
-            ),
-            Container(
-              margin: const EdgeInsets.only(left: 10.0),
-              child: Text('Welcome ${auth.user!.username}'),
+  Widget _buildUserWelcome() {
+    return FutureBuilder<User?>(
+      future: auth.getUser(),
+      builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          final user = snapshot.data;
+
+          return Container(
+            margin: const EdgeInsets.only(top: 10.0),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage(user!.avatarUrl != '' ? user.avatarUrl : ''),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 10.0),
+                  child: Text('Welcome ${user.username}'),
+                ),
+                const Spacer(),
+                Container(
+                  margin: const EdgeInsets.only(left: 10.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      auth.logout().then((res) { context.go('/login'); });
+                    }, 
+                    child: Text(
+                      'Logout',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor
+                      ),
+                    )
+                  ),
+                )
+              ],
             )
-          ],
-        )
-      );
-    } else {
-      return Container(width: 0, height: 0);
-    }
+          );
+        } else {
+          return Container(width: 0, height: 0);
+        }
+      },
+    );
   }
 
   @override

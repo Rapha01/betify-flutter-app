@@ -6,8 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
+  final String? message;
 
-  LoginScreen({Key? key}): super(key: key);
+  LoginScreen({this.message, Key? key}): super(key: key);
   final AuthApiService authApi = AuthApiService();
 
   @override
@@ -28,6 +29,15 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) { _checkForMessage(); });
+  }
+
+  void _checkForMessage() {
+    if (widget.message != null) {
+      var snackBar = SnackBar(content: Text(widget.message ?? ''));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    print('TTTTTTT ${widget.message}');
   }
 
   @override
@@ -37,17 +47,14 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  _login() async {
-    try {
-        final data = await widget.authApi.login(_loginData);
+  void _handleSuccess(data) {
+    print('login response: ${data}');
+    context.go('/');
+  }
 
-        print('login response: ${data}');
-
-        context.go('/');
-      } catch (e) {
-        var snackBar = SnackBar(content: Text(e.toString()));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
+  void _handleError(error) {
+    var snackBar = SnackBar(content: Text(error.toString()));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   _submit() async {
@@ -55,9 +62,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (form!.validate()) {
       form.save();
-      _login();
 
-      print('${_loginData.password} ${_loginData.email}');
+      widget.authApi
+        .login(_loginData)
+        .then(_handleSuccess)
+        .catchError(_handleError);
+
     } else {
       setState(() { autoValidate = AutovalidateMode.onUserInteraction;});
     }
@@ -136,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           GestureDetector(
-            onTap:() => { context.go('/login/register') },
+            onTap:() => { context.go('/register') },
             child: Text(
               'Not registered yet? Resgister now!',
               style: TextStyle(

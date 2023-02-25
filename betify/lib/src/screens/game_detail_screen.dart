@@ -27,8 +27,6 @@ class GameDetailScreenState extends State<GameDetailScreen> {
 
   _fetchGame() async {
     final Game game = await widget.api.fetchGameById(id: widget.id ?? '');
-    //print('AAAAA');
-    //print(game.title);
 
     setState(() {
       this.game = game;
